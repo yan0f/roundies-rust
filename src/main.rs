@@ -2,27 +2,30 @@ use std::{env, error::Error};
 
 use chrono::Local;
 use dotenv::dotenv;
-use teloxide::dptree::case;
 use teloxide::{
+    Bot,
+    dptree::case,
+    macros::BotCommands,
     net::Download,
+    prelude::*,
     types::{ChatAction, InputFile, Me},
 };
-use teloxide::{prelude::*, Bot};
 use tokio::fs;
 
 async fn start(bot: Bot, msg: Message) -> ResponseResult<()> {
-    let rules = "ПРАВИЛА:
+    const RULES: &str = r#"ПРАВИЛА:
 видео не должно быть больше 360p
 видео должно быть квадратным
 видео должно быть короче 60 секунд
-видео не должно быть тяжелее 8 мегабайт";
+видео не должно быть тяжелее 8 мегабайт"#;
     let text;
     if let Some(first_name) = msg.chat.first_name() {
-        text = format!("привет, {first_name}, пришли видео\n{rules}");
+        text = format!("привет, {first_name}, пришли видео\n{RULES}");
     } else {
-        text = format!("привет, пришли видео\n{rules}");
+        text = format!("привет, пришли видео\n{RULES}");
     }
     bot.send_message(msg.chat.id, text).await?;
+
     Ok(())
 }
 
@@ -93,5 +96,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .build()
         .dispatch()
         .await;
+
     Ok(())
 }
