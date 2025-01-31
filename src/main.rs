@@ -1,14 +1,14 @@
-use std::{env, error::Error};
-
 use chrono::Local;
 use dotenv::dotenv;
+use std::{env, error::Error};
+use teloxide::types::Seconds;
 use teloxide::{
-    Bot,
     dptree::case,
     macros::BotCommands,
     net::Download,
     prelude::*,
-    types::{ChatAction, InputFile, Me},
+    types::{ChatAction, InputFile},
+    Bot,
 };
 use tokio::fs;
 
@@ -25,11 +25,11 @@ async fn start(bot: Bot, msg: Message) -> ResponseResult<()> {
         text = format!("привет, пришли видео\n{RULES}");
     }
     bot.send_message(msg.chat.id, text).await?;
-
+    println!("@{}, /start", msg.chat.username().unwrap_or_default());
     Ok(())
 }
 
-async fn handle_video_message(bot: Bot, msg: Message, _: Me) -> ResponseResult<()> {
+async fn handle_video_message(bot: Bot, msg: Message) -> ResponseResult<()> {
     let video = msg.video().unwrap();
 
     if video.width > 640 || video.height > 640 {
@@ -37,7 +37,7 @@ async fn handle_video_message(bot: Bot, msg: Message, _: Me) -> ResponseResult<(
             .await?;
     } else if video.width != video.height {
         bot.send_message(msg.chat.id, "видео должно быть квадратным:(").await?;
-    } else if video.duration > 60 {
+    } else if video.duration > Seconds::from_seconds(60) {
         bot.send_message(msg.chat.id, "видео должно быть короче 60 секунд:(")
             .await?;
     } else if (video.file.size / 1024 / 1024) > 8 {
@@ -52,16 +52,28 @@ async fn handle_video_message(bot: Bot, msg: Message, _: Me) -> ResponseResult<(
         let mut dst = fs::File::create(&path).await?;
         bot.download_file(&file.path, &mut dst).await?;
 
-        let video_note = InputFile::file(path);
+        let video_note = InputFile::file(&path);
         bot.send_chat_action(msg.chat.id, ChatAction::UploadVideoNote).await?;
         bot.send_video_note(msg.chat.id, video_note).await.expect("");
+        println!(
+            "@{}, id={}, {}",
+            msg.chat.username().unwrap_or_default(),
+            msg.chat.id,
+            path
+        );
     }
 
     Ok(())
 }
 
-async fn handle_non_videos(bot: Bot, msg: Message, _: Me) -> ResponseResult<()> {
+async fn handle_non_videos(bot: Bot, msg: Message) -> ResponseResult<()> {
     bot.send_message(msg.chat.id, "не понял тебя. пришли видео!").await?;
+    println!(
+        "@{}, id={}, {}",
+        msg.chat.username().unwrap_or_default(),
+        msg.chat.id,
+        msg.text().unwrap_or_default()
+    );
 
     Ok(())
 }
