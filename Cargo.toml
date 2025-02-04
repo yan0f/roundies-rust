@@ -2,6 +2,7 @@
 name = "roundies"
 version = "0.1.0"
 edition = "2021"
+description = "Telegram bot that converts regular videos into round video messages"
 
 [dependencies]
 teloxide = { version = "0.13.0", features = ["macros"] }
