@@ -1,12 +1,11 @@
 [package]
 name = "roundies"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 description = "Telegram bot that converts regular videos into round video messages"
 
 [dependencies]
 teloxide = { version = "0.13.0", features = ["macros"] }
-tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1.44.0", features = ["rt-multi-thread", "macros"] }
 dotenv = "0.15.0"
-chrono = "0.4.39"
-env_logger = "0.11.6"
+chrono = "0.4.40"
