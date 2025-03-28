@@ -6,6 +6,6 @@ description = "Telegram bot that converts regular videos into round video messag
 
 [dependencies]
 teloxide = { version = "0.13.0", features = ["macros"] }
-tokio = { version = "1.44.0", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1.44.1", features = ["rt-multi-thread", "macros"] }
 dotenv = "0.15.0"
 chrono = "0.4.40"
