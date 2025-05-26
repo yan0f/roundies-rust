@@ -5,7 +5,7 @@ edition = "2024"
 description = "Telegram bot that converts regular videos into round video messages"
 
 [dependencies]
-teloxide = { version = "0.13.0", features = ["macros"] }
+teloxide = { version = "0.15.0", features = ["macros"] }
 tokio = { version = "1.45.1", features = ["rt-multi-thread", "macros"] }
 dotenv = "0.15.0"
 chrono = "0.4.41"
