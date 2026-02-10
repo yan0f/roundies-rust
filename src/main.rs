@@ -3,12 +3,12 @@ use dotenv::dotenv;
 use std::{env, error::Error};
 use teloxide::types::Seconds;
 use teloxide::{
+    Bot,
     dptree::case,
     macros::BotCommands,
     net::Download,
     prelude::*,
     types::{ChatAction, InputFile},
-    Bot,
 };
 use tokio::fs;
 
@@ -45,7 +45,7 @@ async fn handle_video_message(bot: Bot, msg: Message) -> ResponseResult<()> {
             .await?;
     } else {
         let now = Local::now();
-        let file = bot.get_file(&video.file.id).await?;
+        let file = bot.get_file(video.file.id).await?;
         let file_path = msg.chat.username().unwrap_or_default();
 
         let path = format!("./videos/{file_path}-{now}.mp4");
