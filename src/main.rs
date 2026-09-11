@@ -1,6 +1,6 @@
 use chrono::Local;
 use dotenv::dotenv;
-use std::{env, error::Error};
+use std::{env, error::Error, sync::Arc};
 use teloxide::types::Seconds;
 use teloxide::{
     Bot,
@@ -45,11 +45,11 @@ async fn handle_video_message(bot: Bot, msg: Message) -> ResponseResult<()> {
             .await?;
     } else {
         let now = Local::now();
-        let file = bot.get_file(video.file.id).await?;
+        let file = bot.get_file(video.file.id.clone()).await?;
         let file_path = msg.chat.username().unwrap_or_default();
 
         let path = format!("./videos/{file_path}-{now}.mp4");
-        let mut dst = fs::File::create(&path).await?;
+        let mut dst = fs::File::create(&path).await.map_err(Arc::new)?;
         bot.download_file(&file.path, &mut dst).await?;
 
         let video_note = InputFile::file(&path);
